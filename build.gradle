@@ -1,0 +1,35 @@
+
+
+buildscript {
+    ext {
+        vertxVersion = '3.4.2'
+        problemVersion = '0.11.0'
+    }
+}
+
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+
+dependencies {
+
+    compile "io.vertx:vertx-core:${vertxVersion}"
+    compile "io.vertx:vertx-web:${vertxVersion}"
+    compile "io.vertx:vertx-rx-java:${vertxVersion}"
+    compile "org.zalando:problem:${problemVersion}"
+    compile "com.nurkiewicz.typeof:typeof:0.0.1"
+    testCompile "org.zalando:jackson-datatype-problem:${problemVersion}"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'io.rest-assured:rest-assured:3.0.3'
+    testCompile "io.vertx:vertx-unit:${vertxVersion}"
+}
+
