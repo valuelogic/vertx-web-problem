@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/valuelogic/vertx-web-problem/tree/master.svg?style=shield)](https://circleci.com/gh/valuelogic/vertx-web-problem/tree/master)
+[![CircleCI](https://circleci.com/gh/valuelogic/vertx-web-problem/tree/master.svg?style=shield&circle-token=b1d5f5fd7022a835d2080978854d6d9ba1991c2e)](https://circleci.com/gh/valuelogic/vertx-web-problem/tree/master)
 
 # Vertx web Problem handling
 
