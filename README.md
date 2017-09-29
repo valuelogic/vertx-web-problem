@@ -4,7 +4,7 @@
 
 This small vertx-web project provides support for problem details - https://tools.ietf.org/html/rfc7807
 
-It uses https://github.com/zalando/problem beneath.
+It uses [Zalando Problem](https://github.com/zalando/problem) beneath.
 
 # How to use
 
