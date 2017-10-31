@@ -12,7 +12,7 @@ Add dependency in Gradle:
 
 ```groovy
 dependencies {
-  compile "one.valuelogic.vertx-web-problem:0.1"
+  compile "one.valuelogic.vertx-web-problem:{version}"
 }
 ```
 
@@ -23,7 +23,7 @@ or in Maven:
    <dependency>
       <groupId>one.valuelogic</groupId>
       <artifactId>vertx-web-problem</artifactId>
-      <version>0.1</version>
+      <version>{version}</version>
    </dependency>
 </dependencies>   
 ```
