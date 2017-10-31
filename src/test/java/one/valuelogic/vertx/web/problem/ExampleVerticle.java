@@ -3,10 +3,9 @@ package one.valuelogic.vertx.web.problem;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
 
-import io.vertx.rxjava.core.AbstractVerticle;
-
-import io.vertx.rxjava.ext.web.Router;
-import io.vertx.rxjava.ext.web.handler.BodyHandler;
+import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.handler.BodyHandler;
 import org.zalando.problem.ProblemModule;
 
 public class ExampleVerticle extends AbstractVerticle {
@@ -26,16 +25,10 @@ public class ExampleVerticle extends AbstractVerticle {
         vertx.createHttpServer()
                 .requestHandler(router::accept)
                 .rxListen(HTTP_PORT)
-                .subscribe(s -> {
-                    startFuture.complete();
-                }, t -> {
-                    startFuture.fail(t);
-                });
-
+                .subscribe(s -> startFuture.complete(), startFuture::fail);
     }
 
-
-      private void configureJsonMapper() {
+    private void configureJsonMapper() {
         Json.mapper.registerModule(new ProblemModule());
     }
 }

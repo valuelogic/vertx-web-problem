@@ -1,10 +1,10 @@
 package one.valuelogic.vertx.web.problem;
 
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.RoutingContext;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static org.zalando.problem.Problem.valueOf;
+import static org.zalando.problem.Status.NOT_FOUND;
 
 public class NotFoundHandler implements Handler<RoutingContext> {
 

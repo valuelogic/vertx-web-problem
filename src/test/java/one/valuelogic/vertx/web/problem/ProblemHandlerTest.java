@@ -1,7 +1,7 @@
 package one.valuelogic.vertx.web.problem;
 
 import io.vertx.core.Handler;
-import io.vertx.rxjava.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.RoutingContext;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

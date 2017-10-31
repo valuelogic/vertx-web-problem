@@ -1,8 +1,8 @@
 
 buildscript {
     ext {
-        vertxVersion = '3.4.2'
-        problemVersion = '0.11.0'
+        vertxVersion = '3.5.0'
+        problemVersion = '0.20.0'
     }
 }
 
@@ -26,7 +26,7 @@ dependencies {
 
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
-    compile "io.vertx:vertx-rx-java:${vertxVersion}"
+    compile "io.vertx:vertx-rx-java2:${vertxVersion}"
     compile "org.zalando:problem:${problemVersion}"
     compile "com.nurkiewicz.typeof:typeof:0.0.1"
     testCompile "org.zalando:jackson-datatype-problem:${problemVersion}"

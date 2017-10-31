@@ -3,9 +3,9 @@ package one.valuelogic.vertx.web.problem;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.Test;
 import org.zalando.problem.Problem;
+import org.zalando.problem.Status;
 import org.zalando.problem.ThrowableProblem;
 
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -24,7 +24,7 @@ public class ProblemFactoryTest {
 
     @Test
     public void shouldMapDefaultProblemToProblem() {
-        ThrowableProblem defaultProblem = Problem.builder().withStatus(BAD_REQUEST).withTitle("Bad request").build();
+        ThrowableProblem defaultProblem = Problem.builder().withStatus(Status.BAD_REQUEST).withTitle("Bad request").build();
         Problem problem = ProblemFactory.create(defaultProblem, "/api/test");
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
@@ -72,7 +72,7 @@ public class ProblemFactoryTest {
 
     @Test
     public void shouldReturnProblemWithoutPath() {
-        ThrowableProblem defaultProblem = Problem.builder().withStatus(BAD_REQUEST).withTitle("Bad request").build();
+        ThrowableProblem defaultProblem = Problem.builder().withStatus(Status.BAD_REQUEST).withTitle("Bad request").build();
         Problem problem = ProblemFactory.create(defaultProblem, null);
 
         assertThat(problem.getInstance()).isNull();
