@@ -1,19 +1,14 @@
 package one.valuelogic.vertx.web.problem;
 
+import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Handler;
-import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.ext.web.RoutingContext;
+import one.valuelogic.vertx.web.problem.impl.NotFoundHandlerImpl;
 
-import static org.zalando.problem.Problem.valueOf;
-import static org.zalando.problem.Status.NOT_FOUND;
+@VertxGen
+public interface NotFoundHandler extends Handler<RoutingContext> {
 
-public class NotFoundHandler implements Handler<RoutingContext> {
-
-    @Override
-    public void handle(RoutingContext context) {
-        context.fail(valueOf(NOT_FOUND));
-    }
-
-    public static NotFoundHandler create() {
-        return new NotFoundHandler();
+    static NotFoundHandler create() {
+        return new NotFoundHandlerImpl();
     }
 }

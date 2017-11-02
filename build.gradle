@@ -22,11 +22,16 @@ repositories {
 group = 'one.valuelogic'
 archivesBaseName = 'vertx-web-problem'
 
+
 dependencies {
+
+
 
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
+    compile "io.vertx:vertx-rx-java:${vertxVersion}"
     compile "io.vertx:vertx-rx-java2:${vertxVersion}"
+    compileOnly "io.vertx:vertx-codegen:${vertxVersion}:processor"
     compile "org.zalando:problem:${problemVersion}"
     compile "com.nurkiewicz.typeof:typeof:0.0.1"
     testCompile "org.zalando:jackson-datatype-problem:${problemVersion}"

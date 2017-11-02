@@ -24,7 +24,6 @@ public class NotFoundHandlerTest {
     @Before
     public void setUp(TestContext context) throws IOException {
         vertx = Vertx.vertx();
-        //vertx.exceptionHandler(context.exceptionHandler());
         vertx.deployVerticle(ExampleVerticle.class.getName(), context.asyncAssertSuccess());
     }
 
@@ -35,8 +34,7 @@ public class NotFoundHandlerTest {
 
     @Test
     public void shouldCreateNotFoundHandler() {
-        NotFoundHandler handler = NotFoundHandler.create();
-        assertThat(handler).isNotNull();
+        assertThat(NotFoundHandler.create()).isNotNull();
     }
 
     @Test
@@ -49,9 +47,9 @@ public class NotFoundHandlerTest {
             .post("/test-get")
         .then()
             .assertThat()
-            .contentType("application/problem+json")
-            .body("title", equalTo("Not Found"))
-            .body("status", equalTo(404));
+                .contentType("application/problem+json")
+                .body("title", equalTo("Not Found"))
+                .body("status", equalTo(404));
         async.complete();
     }
 
@@ -60,12 +58,13 @@ public class NotFoundHandlerTest {
         given()
             .port(ExampleVerticle.HTTP_PORT)
         .when()
+            .contentType("application/json")
             .get("/fakeUrl")
         .then()
             .assertThat()
-            .contentType("application/problem+json")
-            .body("title", equalTo("Not Found"))
-            .body("status", equalTo(404));
+                .contentType("application/problem+json")
+                .body("title", equalTo("Not Found"))
+                .body("status", equalTo(404));
     }
 
 }
