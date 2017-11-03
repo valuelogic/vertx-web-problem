@@ -11,8 +11,6 @@ import one.valuelogic.vertx.web.problem.ProblemHandler;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 
-import java.util.function.Function;
-
 public class ProblemHandlerImpl implements ProblemHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProblemHandlerImpl.class);
@@ -29,10 +27,15 @@ public class ProblemHandlerImpl implements ProblemHandler {
     @Override
     public void handle(RoutingContext context) {
         Problem problem = ProblemFactory.create(context.failure());
-        if (Status.INTERNAL_SERVER_ERROR.equals(problem.getStatus())) {
-            LOG.error("Internal server error when handling path: " + context.request().path(), context.failure());
+        if (isServerProblem(problem)) {
+            LOG.error("Server error when handling path: " + context.request().path(), context.failure());
         }
         write(context.response(), problem);
+    }
+
+    private static boolean isServerProblem(Problem problem) {
+        return problem.getStatus() == null ||
+                (problem.getStatus().getStatusCode() >= 500 && problem.getStatus().getStatusCode() < 600);
     }
 
     private static void write(HttpServerResponse response, Problem problem) {
