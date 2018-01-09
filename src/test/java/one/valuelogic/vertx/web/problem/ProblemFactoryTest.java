@@ -1,5 +1,6 @@
 package one.valuelogic.vertx.web.problem;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
@@ -117,14 +118,15 @@ public class ProblemFactoryTest {
     public void shouldReturn404ForInvalidJsonViaJacksonAndCustomStatusCode() {
         String invalidJson = "{\"testFieldd\" : \"o\"}";
         ObjectMapper objectMapper = new ObjectMapper();
-        Throwable throwable = catchThrowable(() -> objectMapper.readValue(invalidJson, TestClass.class));
+        JsonProcessingException jsonProcessingException = (JsonProcessingException) catchThrowable(() -> objectMapper.readValue(invalidJson, TestClass.class));
+        jsonProcessingException.clearLocation();
 
-        Problem problem = ProblemFactory.create(throwable, Status.NOT_FOUND.getStatusCode());
+        Problem problem = ProblemFactory.create(jsonProcessingException, Status.NOT_FOUND.getStatusCode());
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(404);
         assertThat(problem.getTitle()).isEqualTo("Not Found");
         assertThat(problem.getInstance()).isNull();
-        assertThat(problem.getDetail()).matches("Failed to decode JSON at line: [0-9]+, column: [0-9]+");
+        assertThat(problem.getDetail()).matches("Failed to decode JSON");
         assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
         assertThat(problem.getParameters().isEmpty());
     }

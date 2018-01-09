@@ -38,7 +38,10 @@ public class ProblemFactory {
 
     private static String getJacksonProcessingExceptionMessage(JsonProcessingException ex) {
         JsonLocation loc = ex.getLocation();
-        return String.format("Failed to decode JSON at line: %s, column: %s", loc.getLineNr(), loc.getColumnNr());
+        if (loc != null) {
+            return String.format("Failed to decode JSON at line: %s, column: %s", loc.getLineNr(), loc.getColumnNr());
+        }
+        return "Failed to decode JSON";
     }
 
     private static ThrowableProblem defaultToProblem(DefaultProblem defaultProblem) {
