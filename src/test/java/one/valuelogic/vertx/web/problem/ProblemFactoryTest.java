@@ -1,6 +1,7 @@
 package one.valuelogic.vertx.web.problem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import org.junit.Test;
 import org.zalando.problem.Problem;
@@ -19,7 +20,7 @@ public class ProblemFactoryTest {
     public void shouldMapDefaultProblemTo500IfNoStatus() {
         ThrowableProblem defaultProblem = Problem.builder().build();
 
-        Problem problem = ProblemFactory.create(defaultProblem);
+        Problem problem = ProblemFactory.create(defaultProblem, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(500);
         assertThat(problem.getTitle()).isEqualTo("Internal Server Error");
@@ -33,7 +34,7 @@ public class ProblemFactoryTest {
     public void shouldMapDefaultProblemToProblem() {
         ThrowableProblem defaultProblem = Problem.builder().withStatus(Status.BAD_REQUEST).withTitle("Bad Request").build();
 
-        Problem problem = ProblemFactory.create(defaultProblem);
+        Problem problem = ProblemFactory.create(defaultProblem, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
         assertThat(problem.getTitle()).isEqualTo("Bad Request");
@@ -44,7 +45,22 @@ public class ProblemFactoryTest {
     }
 
     @Test
-    public void shouldMapFullDefaultProblemToProblem() throws Exception {
+    public void shouldMapThrowableAndStatusCodeToProblem() {
+        String error = "error";
+        Throwable throwable = new IllegalArgumentException(error);
+
+        Problem problem = ProblemFactory.create(throwable, 400);
+
+        assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
+        assertThat(problem.getTitle()).isEqualTo("Bad Request");
+        assertThat(problem.getInstance()).isNull();
+        assertThat(problem.getDetail()).isNull();
+        assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
+        assertThat(problem.getParameters().isEmpty());
+    }
+
+    @Test
+    public void shouldMapFullDefaultProblemToProblem() {
         URI instance = URI.create("http://some-uri-identifing-problem");
         URI type = URI.create("http://some-uri-describing-type");
         String details = "Details why service is down";
@@ -56,7 +72,7 @@ public class ProblemFactoryTest {
                 .withType(type)
                 .build();
 
-        Problem problem = ProblemFactory.create(originalProblem);
+        Problem problem = ProblemFactory.create(originalProblem, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(503);
         assertThat(problem.getTitle()).isEqualTo("Service Unavailable");
@@ -71,7 +87,7 @@ public class ProblemFactoryTest {
         String invalidJson = "{\"testFieldd\" : \"o\"}";
         Throwable throwable = catchThrowable(() -> Json.decodeValue(invalidJson, TestClass.class));
 
-        Problem problem = ProblemFactory.create(throwable);
+        Problem problem = ProblemFactory.create(throwable, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
         assertThat(problem.getTitle()).isEqualTo("Bad Request");
@@ -87,7 +103,7 @@ public class ProblemFactoryTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Throwable throwable = catchThrowable(() -> objectMapper.readValue(invalidJson, TestClass.class));
 
-        Problem problem = ProblemFactory.create(throwable);
+        Problem problem = ProblemFactory.create(throwable, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
         assertThat(problem.getTitle()).isEqualTo("Bad Request");
@@ -98,25 +114,81 @@ public class ProblemFactoryTest {
     }
 
     @Test
+    public void shouldReturn404ForInvalidJsonViaJacksonAndCustomStatusCode() {
+        String invalidJson = "{\"testFieldd\" : \"o\"}";
+        ObjectMapper objectMapper = new ObjectMapper();
+        Throwable throwable = catchThrowable(() -> objectMapper.readValue(invalidJson, TestClass.class));
+
+        Problem problem = ProblemFactory.create(throwable, Status.NOT_FOUND.getStatusCode());
+
+        assertThat(problem.getStatus().getStatusCode()).isEqualTo(404);
+        assertThat(problem.getTitle()).isEqualTo("Not Found");
+        assertThat(problem.getInstance()).isNull();
+        assertThat(problem.getDetail()).matches("Failed to decode JSON at line: [0-9]+, column: [0-9]+");
+        assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
+        assertThat(problem.getParameters().isEmpty());
+    }
+
+    @Test
+    public void shouldReturn400ForInvalidJson() {
+        Throwable throwable = new DecodeException("error");
+
+        Problem problem = ProblemFactory.create(throwable, -1);
+
+        assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
+        assertThat(problem.getTitle()).isEqualTo("Bad Request");
+        assertThat(problem.getInstance()).isNull();
+        assertThat(problem.getDetail()).isEqualTo("Failed to decode JSON");
+        assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
+        assertThat(problem.getParameters().isEmpty());
+    }
+
+    @Test
+    public void shouldReturn404ForInvalidJson() {
+        Throwable throwable = new DecodeException("error");
+
+        Problem problem = ProblemFactory.create(throwable, Status.NOT_FOUND.getStatusCode());
+
+        assertThat(problem.getStatus().getStatusCode()).isEqualTo(404);
+        assertThat(problem.getTitle()).isEqualTo("Not Found");
+        assertThat(problem.getInstance()).isNull();
+        assertThat(problem.getDetail()).isEqualTo("Failed to decode JSON");
+        assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
+        assertThat(problem.getParameters().isEmpty());
+    }
+
+    @Test
     public void shouldReturnInternalServerErrorForNoException() {
-        Problem problem = ProblemFactory.create(null);
+        Problem problem = ProblemFactory.create(null, -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(500);
         assertThat(problem.getTitle()).isEqualTo("Internal Server Error");
         assertThat(problem.getInstance()).isNull();
-        assertThat(problem.getDetail()).isEqualTo("Internal Server Error");
+        assertThat(problem.getDetail()).isNull();
+        assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
+        assertThat(problem.getParameters().isEmpty());
+    }
+
+    @Test
+    public void shouldReturnBadRequestBasedJustOnStatusCode() {
+        Problem problem = ProblemFactory.create(null, 400);
+
+        assertThat(problem.getStatus().getStatusCode()).isEqualTo(400);
+        assertThat(problem.getTitle()).isEqualTo("Bad Request");
+        assertThat(problem.getInstance()).isNull();
+        assertThat(problem.getDetail()).isNull();
         assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
         assertThat(problem.getParameters().isEmpty());
     }
 
     @Test
     public void shouldReturn500ForNotHandledException() {
-        Problem problem = ProblemFactory.create(new ArrayIndexOutOfBoundsException(5));
+        Problem problem = ProblemFactory.create(new ArrayIndexOutOfBoundsException(5), -1);
 
         assertThat(problem.getStatus().getStatusCode()).isEqualTo(500);
         assertThat(problem.getTitle()).isEqualTo("Internal Server Error");
         assertThat(problem.getInstance()).isNull();
-        assertThat(problem.getDetail()).isEqualTo("Internal Server Error");
+        assertThat(problem.getDetail()).isNull();
         assertThat(problem.getType()).isEqualTo(Problem.DEFAULT_TYPE);
         assertThat(problem.getParameters().isEmpty());
     }
