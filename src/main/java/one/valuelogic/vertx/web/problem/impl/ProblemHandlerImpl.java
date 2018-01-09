@@ -26,7 +26,7 @@ public class ProblemHandlerImpl implements ProblemHandler {
 
     @Override
     public void handle(RoutingContext context) {
-        Problem problem = ProblemFactory.create(context.failure());
+        Problem problem = ProblemFactory.create(context.failure(), context.statusCode());
         if (isServerProblem(problem)) {
             LOG.error("Server error when handling path: " + context.request().path(), context.failure());
         }
