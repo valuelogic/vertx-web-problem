@@ -2,7 +2,7 @@
 buildscript {
     ext {
         vertxVersion = '3.5.0'
-        problemVersion = '0.20.0'
+        problemVersion = '0.20.1'
     }
 }
 
