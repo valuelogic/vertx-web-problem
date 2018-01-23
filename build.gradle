@@ -100,9 +100,24 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id 'dyk'
-                        name 'Przemek Dyk'
-                        email 'przemek.dyk@gmail.com'
+                        id 'kgarlikowski'
+                        name 'Konrad Garlikowski'
+                        email 'kgarligowski@valuelogic.one'
+                    }
+                    developer {
+                        id 'adomanski'
+                        name 'Adam Domanski'
+                        email 'adomanski@valuelogic.one'
+                    }
+                    developer {
+                        id 'rpiotrowski'
+                        name 'Rafał Piotrowski'
+                        email 'rpiotrowski@valuelogic.one'
+                    }
+                    developer {
+                        id 'kfolwarczny'
+                        name 'Krzysztof Folwarczny'
+                        email 'kfolwarczny@valuelogic.one'
                     }
                 }
             }
