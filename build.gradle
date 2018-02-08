@@ -4,6 +4,12 @@ buildscript {
         vertxVersion = '3.5.0'
         problemVersion = '0.20.1'
     }
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
+    }
 }
 
 plugins {
@@ -13,7 +19,10 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
-
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+apply plugin: 'propdeps-eclipse'
 
 repositories {
     jcenter()
@@ -24,13 +33,10 @@ archivesBaseName = 'vertx-web-problem'
 
 
 dependencies {
-
-
-
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
-    compile "io.vertx:vertx-rx-java:${vertxVersion}"
-    compile "io.vertx:vertx-rx-java2:${vertxVersion}"
+    optional "io.vertx:vertx-rx-java:${vertxVersion}"
+    optional "io.vertx:vertx-rx-java2:${vertxVersion}"
     compileOnly "io.vertx:vertx-codegen:${vertxVersion}:processor"
     compile "org.zalando:problem:${problemVersion}"
     compile "com.nurkiewicz.typeof:typeof:0.0.1"
